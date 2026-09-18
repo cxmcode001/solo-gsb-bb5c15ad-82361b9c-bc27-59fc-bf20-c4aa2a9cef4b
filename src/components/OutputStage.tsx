@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { PatchOp } from '../merge/rfc6902';
 import type { JsonValue } from '../merge/types';
+import type { MergeResult, Resolutions } from '../merge/threeWayMerge';
 import type { CompiledSchema } from '../merge/schema';
 import { validateMerged } from '../merge/schema';
 import { buildPointerLines, resolveLine } from '../merge/jsonLineMap';
@@ -8,11 +9,15 @@ import { downloadText } from '../download';
 import SchemaPanel from './SchemaPanel';
 import ValidationIssues from './ValidationIssues';
 import PatchAuditPanel from './PatchAuditPanel';
+import ProvenancePanel from './ProvenancePanel';
 
 interface Props {
   base: JsonValue;
   merged: JsonValue;
   patch: PatchOp[];
+  /** 合并树与当前决策：决策溯源视图据此推导变更清单（重新生成后反映最新决策） */
+  mergeResult: MergeResult;
+  resolutions: Resolutions;
   schemaEnabled: boolean;
   schema: CompiledSchema | null;
   onSchemaEnabledChange: (v: boolean) => void;
@@ -63,6 +68,8 @@ export default function OutputStage({
   base,
   merged,
   patch,
+  mergeResult,
+  resolutions,
   schemaEnabled,
   schema,
   onSchemaEnabledChange,
@@ -152,6 +159,7 @@ export default function OutputStage({
           </div>
         </div>
       </div>
+      <ProvenancePanel mergeResult={mergeResult} resolutions={resolutions} onCopy={handleCopy} />
       <PatchAuditPanel base={base} merged={merged} autoPatch={patch} onCopy={handleCopy} />
       <div className="output-actions">
         <button onClick={onBack}>← 返回继续调整</button>

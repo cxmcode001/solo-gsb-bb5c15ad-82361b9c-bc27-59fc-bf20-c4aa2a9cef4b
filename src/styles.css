@@ -1011,6 +1011,147 @@ pre {
   margin-top: 16px;
 }
 
+/* ---------- 决策溯源 ---------- */
+.provenance-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-top: 16px;
+}
+
+.provenance-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.provenance-header h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.provenance-header .hint {
+  color: var(--text-dim);
+  font-size: 12px;
+}
+
+.provenance-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.prov-filter {
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 12.5px;
+  color: var(--text-dim);
+}
+
+.prov-filter.active {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.provenance-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.provenance-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.prov-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  text-align: left;
+  background: var(--bg-panel-2);
+}
+
+.prov-row.selected {
+  outline: 1px solid var(--accent);
+  border-color: var(--accent);
+}
+
+.prov-row .prov-pointer {
+  flex: 1;
+  min-width: 0;
+  font-family: 'JetBrains Mono', Consolas, monospace;
+  font-size: 12.5px;
+  color: var(--yellow);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prov-deleted {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--red);
+  border: 1px solid var(--red);
+  border-radius: 999px;
+  padding: 0 8px;
+}
+
+.badge.conflict-ours { color: #fff; background: #2f6fdd; }
+.badge.conflict-theirs { color: #fff; background: #7a4fe0; }
+.badge.conflict-custom { color: #3a2c00; background: var(--yellow); }
+
+.provenance-detail {
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  min-height: 120px;
+}
+
+.provenance-detail .prov-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.provenance-detail .pointer {
+  font-family: 'JetBrains Mono', Consolas, monospace;
+  font-size: 13px;
+  color: var(--yellow);
+  word-break: break-all;
+}
+
+.prov-side-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.side-value pre.absent {
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.provenance-panel .panel-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 /* ---------- 补丁审计面板 ---------- */
 .patch-audit-panel {
   background: var(--bg-panel);

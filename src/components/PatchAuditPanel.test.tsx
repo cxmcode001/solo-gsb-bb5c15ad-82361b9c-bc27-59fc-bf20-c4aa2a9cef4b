@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import PatchAuditPanel from './PatchAuditPanel';
 import OutputStage from './OutputStage';
 import { diff } from '../merge/rfc6902';
+import { threeWayMerge } from '../merge/threeWayMerge';
 import type { JsonValue } from '../merge/types';
 
 (globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true;
@@ -168,6 +169,8 @@ describe('补丁审计与合并结果隔离（OutputStage 集成）', () => {
           base={BASE}
           merged={MERGED}
           patch={diff(BASE, MERGED)}
+          mergeResult={threeWayMerge(BASE, MERGED, MERGED)}
+          resolutions={{}}
           schemaEnabled={false}
           schema={null}
           onSchemaEnabledChange={() => {}}

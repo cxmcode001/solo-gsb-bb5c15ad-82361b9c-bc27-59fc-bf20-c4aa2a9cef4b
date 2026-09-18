@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import OutputStage from './OutputStage';
 import type { CompiledSchema } from '../merge/schema';
 import { compileSchema } from '../merge/schema';
+import { threeWayMerge } from '../merge/threeWayMerge';
 import type { JsonValue } from '../merge/types';
 
 (globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true;
@@ -29,9 +30,16 @@ function typeIntoSchema(container: HTMLElement, v: string) {
 
 describe('OutputStage Schema 校验集成', () => {
   const baseProps = {
-    base: { id: 0 } as unknown as JsonValue,
+    base: { id: 0, tag: 'x' } as unknown as JsonValue,
     merged: { id: 1, tag: 'c' } as unknown as JsonValue,
     patch: [],
+    // /id 仅当前分支修改、/tag 仅目标分支修改（根节点双侧均改 → 按键递归合并）
+    mergeResult: threeWayMerge(
+      { id: 0, tag: 'x' } as JsonValue,
+      { id: 1, tag: 'x' } as JsonValue,
+      { id: 0, tag: 'c' } as JsonValue,
+    ),
+    resolutions: {},
     onBack: () => {},
     onRestart: () => {},
   };
@@ -114,6 +122,33 @@ describe('OutputStage Schema 校验集成', () => {
     // 重新开启后仍沿用已编译 Schema
     act(() => (h(container, '.schema-toggle input') as HTMLInputElement).click());
     expect(all(container, '.issue-group')).toHaveLength(3);
+  });
+
+  it('输出页包含决策溯源面板：按类别列出变更，点击路径显示四方取值', () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const render = makeRenderer(container);
+    render(
+      <OutputStage
+        {...baseProps}
+        schemaEnabled={false}
+        schema={null}
+        onSchemaEnabledChange={() => {}}
+        onSchemaChange={() => {}}
+      />,
+    );
+
+    // baseProps 的 mergeResult：/id 仅当前分支、/tag 仅目标分支
+    expect(h(container, '.provenance-panel')).not.toBeNull();
+    const rows = all(container, '.prov-row');
+    expect(rows).toHaveLength(2);
+    expect(all(container, '.prov-row .badge.ours')).toHaveLength(1);
+    expect(all(container, '.prov-row .badge.theirs')).toHaveLength(1);
+
+    // 点击 /tag：详情显示基线/两侧/最终值
+    act(() => rows[1].dispatchEvent(new MouseEvent('click', { bubbles: true })));
+    const values = all(container, '.prov-side-values .side-value pre').map((p) => p.textContent);
+    expect(values).toEqual(['"x"', '"x"', '"c"', '"c"']);
   });
 
   it('Schema 解析失败 / $ref 无法解析时提示错误且不覆盖上一份有效 Schema', () => {

@@ -150,11 +150,13 @@ export default function App() {
             restoreInfo={restoreInfo}
           />
         )}
-        {stage === 'output' && merged !== null && baseDoc !== null && (
+        {stage === 'output' && merged !== null && baseDoc !== null && mergeResult !== null && (
           <OutputStage
             base={baseDoc}
             merged={merged}
             patch={patch}
+            mergeResult={mergeResult}
+            resolutions={resolutions}
             schemaEnabled={schemaEnabled}
             schema={schema}
             onSchemaEnabledChange={setSchemaEnabled}
