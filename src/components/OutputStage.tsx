@@ -3,16 +3,21 @@ import type { PatchOp } from '../merge/rfc6902';
 import type { JsonValue } from '../merge/types';
 import type { CompiledSchema } from '../merge/schema';
 import { validateMerged } from '../merge/schema';
+import type { MergeResult, Resolutions } from '../merge/threeWayMerge';
 import { buildPointerLines, resolveLine } from '../merge/jsonLineMap';
 import { downloadText } from '../download';
 import SchemaPanel from './SchemaPanel';
 import ValidationIssues from './ValidationIssues';
 import PatchAuditPanel from './PatchAuditPanel';
+import DecisionTracePanel from './DecisionTracePanel';
 
 interface Props {
   base: JsonValue;
   merged: JsonValue;
   patch: PatchOp[];
+  /** 合并树与冲突解决结果：决策溯源据此还原每一路径的基线 / 两侧值与来源类别 */
+  mergeResult: MergeResult;
+  resolutions: Resolutions;
   schemaEnabled: boolean;
   schema: CompiledSchema | null;
   onSchemaEnabledChange: (v: boolean) => void;
@@ -63,6 +68,8 @@ export default function OutputStage({
   base,
   merged,
   patch,
+  mergeResult,
+  resolutions,
   schemaEnabled,
   schema,
   onSchemaEnabledChange,
@@ -153,6 +160,7 @@ export default function OutputStage({
         </div>
       </div>
       <PatchAuditPanel base={base} merged={merged} autoPatch={patch} onCopy={handleCopy} />
+      <DecisionTracePanel mergeResult={mergeResult} resolutions={resolutions} merged={merged} />
       <div className="output-actions">
         <button onClick={onBack}>← 返回继续调整</button>
         <button onClick={onRestart}>重新开始</button>

@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import OutputStage from './OutputStage';
 import type { CompiledSchema } from '../merge/schema';
 import { compileSchema } from '../merge/schema';
+import { threeWayMerge } from '../merge/threeWayMerge';
 import type { JsonValue } from '../merge/types';
 
 (globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true;
@@ -19,6 +20,11 @@ const all = (container: HTMLElement, sel: string) => [...container.querySelector
 const btnByText = (container: HTMLElement, text: string) =>
   all(container, 'button').find((b) => b.textContent?.includes(text)) as HTMLButtonElement | undefined;
 
+/** 以 base 为基线、merged 为当前分支改动（目标分支不动）构造合并结果，溯源全部归为“仅当前分支” */
+function traceProps(base: JsonValue, merged: JsonValue) {
+  return { mergeResult: threeWayMerge(base, merged, base), resolutions: {} };
+}
+
 /** React 受控组件需要用原生 setter 赋值后再派发 input 事件 */
 function typeIntoSchema(container: HTMLElement, v: string) {
   const ta = h(container, '.schema-input') as HTMLTextAreaElement;
@@ -32,6 +38,7 @@ describe('OutputStage Schema 校验集成', () => {
     base: { id: 0 } as unknown as JsonValue,
     merged: { id: 1, tag: 'c' } as unknown as JsonValue,
     patch: [],
+    ...traceProps({ id: 0 } as unknown as JsonValue, { id: 1, tag: 'c' } as unknown as JsonValue),
     onBack: () => {},
     onRestart: () => {},
   };
